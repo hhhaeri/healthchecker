@@ -18,15 +18,21 @@ class WebModel {
         var results = await Promise.all(
             webList.map((list) => {
               return new Promise((resolve, reject) => {
+                let body = {
+                    name: list.name,
+                    url: list.url,
+                    status: "",
+                };
                 https
                   .get(list.url, (res) => {
                     res.setEncoding("utf8");
-                    let body = "";
-      
-                    res.on("data", (data) => (body += data));
-                    res.on("end", () => resolve(JSON.parse(body)));
+                    res.on("data", () => (body.status = "ok"));
+                    res.on("end", () => resolve(body));
                   })
-                  .on("error", (err) => reject(err));
+                  .on("error", (err) => {
+                    body.status = "error"
+                    resolve(body);
+                  });
               });
             })
           );
@@ -37,4 +43,3 @@ class WebModel {
 }
 
 module.exports = new WebModel;
-

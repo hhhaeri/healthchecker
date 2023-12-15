@@ -18,6 +18,7 @@ class WebController {
 
     let dataList = await webModel.check(dataArray[0].web);
 
+    console.log(dataList)
     // hardcode
     let dataList2 = [
       {
@@ -31,7 +32,7 @@ class WebController {
         status: "error"
       }
     ]
-    res.send(dataList2);
+    res.send(dataList);
   };
 }
 /******************************************************************************

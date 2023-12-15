@@ -1,14 +1,14 @@
 # Service(systemctl service name)
 service:
-  - name:  docker
-  - name:  cloudit-5.0
+  - name: docker
+  - name: cloudit-5.0
 
 # Web
 web:
-  - name: web01
-    url: http://192.168.0.100:3000
-  - name: web02
-    url: https://192.168.0.100:3001
+  - name: FEMS-harbor
+    url: https://registry.fems.cf
+  - name: naver
+    url: https://naver.com/
 
 # Network(HOST) /etc/hosts
 network:
