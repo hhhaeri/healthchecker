@@ -17,6 +17,7 @@
     "js-yaml": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.3.3",
+    "node-libcurl": "^3.0.0",
     "node-schedule": "^2.1.0",
     "request": "^2.88.2"
   },
