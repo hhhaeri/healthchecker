@@ -18,20 +18,6 @@ class WebController {
 
     let dataList = await webModel.check(dataArray[0].web);
 
-    console.log(dataList)
-    // hardcode
-    let dataList2 = [
-      {
-        name: 'web01', 
-        url: 'http://192.168.0.100:3000',
-        status: "ok"
-      },
-      {
-        name: 'web02', 
-        url: 'http://192.168.0.100:3001',
-        status: "error"
-      }
-    ]
     res.send(dataList);
   };
 }
