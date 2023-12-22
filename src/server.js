@@ -8,7 +8,8 @@ const mailling = require('./mailling/mailling.js');
 // const serviceRouter = require('./routes/serviceRoute.route');
 // const networkRouter = require('./routes/networkRoute.route');
 const auto = require("node-schedule");
-global.web123status = false;
+
+
 // Init express
 const app = express();
 // Init environment
@@ -42,15 +43,17 @@ app.listen(port, () =>
     console.log(`🚀 Server running on port ${port}!`));
 
 
-var j = auto.scheduleJob("0/2 * * * * *", async function() {
-    if(web123status === false){
-        await mailling.main()
-    } else {
-        await setTimeout(() =>{
-            web123status = false;
-        },4000);
+// mailling
+mailling.readFileAndInitialize();
+
+auto.scheduleJob("0/10 * * * * *", async function(){
+    if(mailling.webdataList){
+        await mailling.webCheckAndMailling();
     }
-});
-auto.
+})
+
+auto.scheduleJob("0 0 * * *", async function(){
+    await mailling.resetStatus();
+})
 
 module.exports = app;

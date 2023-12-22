@@ -9,6 +9,8 @@ web:
     url: https://registry.fems.cf
   - name: naver
     url: https://naver.com/
+  - name: naver123213213
+    url: https://naver123213213123.com/
 
 # Network(HOST) /etc/hosts
 network:

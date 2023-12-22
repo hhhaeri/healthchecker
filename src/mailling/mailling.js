@@ -1,59 +1,66 @@
-const nodemailer = require('nodemailer');
 const fs = require('fs').promises;
 const yaml = require('js-yaml');
+const maillingModel = require('../models/maillingModel')
 const webModel = require('../models/webModel');
 const serviceModel = require('../models/serviceModel');
 const networkModel = require('../models/networkModel');
-
 const dotenv = require('dotenv');
 
 dotenv.config();
 
-let count = [0, 0, 0];
-
 class mailling {
-    
-    main = async () => {
-        const filePath = 'src/configs/check.yaml';
-
-        const data = await fs.readFile(filePath, 'utf8');
-        const parsedData = yaml.load(data);
-        const dataArray = Array.isArray(parsedData) ? parsedData : [parsedData];
-
-        // let webCheckData = await webModel.check(dataArray[0].web);
-        // let serviceCheckData = await serviceModel.check(dataArray[0].service);
-        // let networkCheckData = await networkModel.check(dataArray[0].network);
-
-        console.log("hi");
-        global.web123status = true;
+    constructor() {
+        this.dataArray = null;
+        this.parsedData = null;
+        this.webdataList = null;
+        this.servicedataList = null;
+        this.networkdataList = null
     }
 
-    mailling = async (msg) => {
-        let transporter = nodemailer.createTransport({
-          service: 'Google',
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          auth: {
-            user: process.env.NODEMAILER_USER,
-            pass: process.env.NODEMAILER_PASS,
-          },
+    readFileAndInitialize = async () => {
+        const filePath = 'src/configs/check.yaml';
+        const data = await fs.readFile(filePath, 'utf8');
+        this.parsedData = yaml.load(data);
+        this.dataArray = Array.isArray(this.parsedData) ? this.parsedData : [this.parsedData];
+        this.webdataList = await this.dataArray[0].web.map((type) => {
+            type.errorCount = 0;
+            type.sendmailStatus = false;
+            return type;
         });
-        console.log(process.env.NODEMAILER_USER);
-        console.log(process.env.NODEMAILER_PASS);
-          
-        // send mail with defined transport object
-        let info = await transporter.sendMail({
-          from: process.env.NODEMAILER_USER,
-          to: "dj622@innogrid.com",
-          subject: 'TEST MSG',
-          text: "Testing Message...",
-          html: `<b>Testing Message...</b>`,
+
+        this.servicedataList = await this.dataArray[0].service.map((type) => {
+            type.errorCount = 0;
+            type.sendmailStatus = false;
+            return type;
         });
+
+        this.networkdataList = await this.dataArray[0].network.map((type) => {
+            type.errorCount = 0;
+            type.sendmailStatus = false;
+            return type;
+        });
+    };
+
+    webCheckAndMailling = async () => {
+        console.log(this.webdataList);
+        let webCheckData = await webModel.mailCheck(this.dataArray[0].web);
+        await webCheckData.map((data) => {
+            if(data.status === "error"){
+                this.webdataList.map((data2) => {
+                    if(data2.name === data.name) return data2.errorCount+=1;
+                })
+            }
+        })
         
-        console.log('Message sent: %s', info.messageId);
-        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-      }
+        await this.webdataList.map((data) =>{
+            if(data.errorCount === 3 & data.sendmailStatus === false){
+                maillingModel.mailling(data.name+" web error 발생\n"+"신속한 조치 필요!!")
+                return data.sendmailStatus=true;
+            }
+        })
+
+        console.log(this.webdataList);
+    }
 }
 
 module.exports = new mailling();
