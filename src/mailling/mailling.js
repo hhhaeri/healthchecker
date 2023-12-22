@@ -54,7 +54,7 @@ class mailling {
         
         await this.webdataList.map((data) =>{
             if(data.errorCount === 3 & data.sendmailStatus === false){
-                maillingModel.mailling(data.name+" web error 발생\n"+"신속한 조치 필요!!")
+                maillingModel.mailling(data.name+" web error 발생\n"+"신속한 조치 필요!! 담당 엔지니어 : 최기엽 연구원")
                 return data.sendmailStatus=true;
             }
         })

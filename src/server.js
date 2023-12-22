@@ -4,16 +4,10 @@ const cors = require("cors");
 const HttpException = require('./utils/HttpException.utils');
 const errorMiddleware = require('./middleware/error.middleware');
 const webRouter = require('./routes/webRoute.js');
-<<<<<<< HEAD
 const serviceRouter = require('./routes/serviceRoute.js');
 const networkRouter = require('./routes/networkRoute.js');
-=======
 const mailling = require('./mailling/mailling.js');
->>>>>>> 10d36cbc127d52dc04e02baa67210e0b156d2071
-// const serviceRouter = require('./routes/serviceRoute.route');
-// const networkRouter = require('./routes/networkRoute.route');
 const auto = require("node-schedule");
-
 
 // Init express
 const app = express();

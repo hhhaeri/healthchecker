@@ -20,13 +20,10 @@
     "node-libcurl": "^3.0.0",
     "node-schedule": "^2.1.0",
     "request": "^2.88.2",
-<<<<<<< HEAD
     "ssh2": "^1.15.0",
     "ssh2-promise": "^1.0.3",
-    "yaml-unist-parser": "^2.0.1"
-=======
+    "yaml-unist-parser": "^2.0.1",
     "nodemailer": "^6.9.7"
->>>>>>> 10d36cbc127d52dc04e02baa67210e0b156d2071
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
