@@ -4,12 +4,16 @@ const cors = require("cors");
 const HttpException = require('./utils/HttpException.utils');
 const errorMiddleware = require('./middleware/error.middleware');
 const webRouter = require('./routes/webRoute.js');
+<<<<<<< HEAD
 const serviceRouter = require('./routes/serviceRoute.js');
 const networkRouter = require('./routes/networkRoute.js');
+=======
+const mailling = require('./mailling/mailling.js');
+>>>>>>> 10d36cbc127d52dc04e02baa67210e0b156d2071
 // const serviceRouter = require('./routes/serviceRoute.route');
 // const networkRouter = require('./routes/networkRoute.route');
 const auto = require("node-schedule");
-
+global.web123status = false;
 // Init express
 const app = express();
 // Init environment
@@ -41,5 +45,17 @@ app.use(errorMiddleware);
 // starting the server
 app.listen(port, () =>
     console.log(`🚀 Server running on port ${port}!`));
+
+
+var j = auto.scheduleJob("0/2 * * * * *", async function() {
+    if(web123status === false){
+        await mailling.main()
+    } else {
+        await setTimeout(() =>{
+            web123status = false;
+        },4000);
+    }
+});
+auto.
 
 module.exports = app;

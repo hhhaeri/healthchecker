@@ -1,7 +1,4 @@
 const webModel = require('../models/webModel');
-const HttpException = require('../utils/HttpException.utils');
-const { validationResult } = require('express-validator');
-const axios = require('axios');
 const dotenv = require('dotenv');
 const request = require('request')
 const fs = require('fs').promises;
@@ -29,28 +26,33 @@ class WebController {
       'Content-Type': 'application/json'
     };
 
+
     var options = {
-      url: 'http://registry.fems.cf',
-      method: 'GET',
-      headers: headers
+         url: 'http://registry.fems.cf',
+         method: 'GET',
+         headers: headers
     };
 
-    var result2 = await new Promise((resolve, reject) => {
-      request(options, function(error, res){
-        if(error){
-	  console.log(error)
-          reject(error);
-        } else{
-	  resolve(res);
-        }
-      })
-    });
+      var result2 = await new Promise((resolve, reject) => {
+          request(options, function(error, res){
+              if(error){
+                  console.log(error)
+                  reject(error);
+              } else{
+                  resolve(res);
+              }
+          })
+      });
 
-    res.send("curl status : " + result2.statusCode);
+
+      let dataList = await webModel.check(dataArray[0].web);
+
+      res.send("curl status : " + result2.statusCode);
+
+      res.send(dataList);
   };
 }
 /******************************************************************************
  *                               Export
  ******************************************************************************/
 module.exports = new WebController;
-

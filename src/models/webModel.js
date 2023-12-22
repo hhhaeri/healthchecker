@@ -1,6 +1,6 @@
 const { multipleColumnSet } = require('../utils/common.utils');
 const exec = require('child_process').exec;
-const request = require('request');
+const https = require("https");
 
 class WebModel {
     find = async () => {
@@ -11,28 +11,35 @@ class WebModel {
         })
     }
 
-    find2 = async () => {
-        var headers = {
-            'Content-Type': 'application/json'
-        };
-         
-        var options = {
-            url: 'http://registry.fems.cf',
-            method: 'GET',
-            headers: headers,
-        };
-         
-        await function callback(error, response, body) {
-            if (!error && response.statusCode == 200) {
-                console.log(body);
-		return body
-            }
-        }
-         
-        request(options, callback);
+    check = async (webList) => {
+        // webList = [{url, status, errorCount, },...]
+        // hardCoding List is harborUrl and ElasticSearchURL on FEMS Server
+        
+        var results = await Promise.all(
+            webList.map((list) => {
+              return new Promise((resolve, reject) => {
+                let body = {
+                    name: list.name,
+                    url: list.url,
+                    status: "",
+                };
+                https
+                  .get(list.url, (res) => {
+                    res.setEncoding("utf8");
+                    res.on("data", () => (body.status = "ok"));
+                    res.on("end", () => resolve(body));
+                  })
+                  .on("error", (err) => {
+                    body.status = "error"
+                    resolve(body);
+                  });
+              });
+            })
+          );
+
+        return results
     }
 
 }
 
 module.exports = new WebModel;
-
