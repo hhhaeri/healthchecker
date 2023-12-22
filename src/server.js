@@ -4,6 +4,8 @@ const cors = require("cors");
 const HttpException = require('./utils/HttpException.utils');
 const errorMiddleware = require('./middleware/error.middleware');
 const webRouter = require('./routes/webRoute.js');
+const serviceRouter = require('./routes/serviceRoute.js');
+const networkRouter = require('./routes/networkRoute.js');
 // const serviceRouter = require('./routes/serviceRoute.route');
 // const networkRouter = require('./routes/networkRoute.route');
 const auto = require("node-schedule");
@@ -24,8 +26,8 @@ app.options("*", cors());
 const port = Number(process.env.PORT || 18000);
 
 app.use(`/api/v1/web`, webRouter);
-// app.use(`/api/v1/service`, serviceRouter);
-// app.use(`/api/v1/network`, networkRouter);
+app.use(`/api/v1/service`, serviceRouter);
+app.use(`/api/v1/network`, networkRouter);
 
 // 404 error
 app.all('*', (req, res, next) => {

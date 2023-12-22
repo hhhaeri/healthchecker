@@ -15,12 +15,15 @@
     "express": "^4.18.2",
     "express-validator": "^6.6.0",
     "js-yaml": "^4.1.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^2.3.3",
     "node-schedule": "^2.1.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "ssh2": "^1.15.0",
+    "ssh2-promise": "^1.0.3",
+    "yaml-unist-parser": "^2.0.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.19"
+    "nodemon": "^3.0.2"
   }
 }

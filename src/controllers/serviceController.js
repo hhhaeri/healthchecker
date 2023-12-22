@@ -1,46 +1,100 @@
-// const ServiceModel = require('../models/serviceModel');
-// const HttpException = require('../utils/HttpException.utils');
-// const { validationResult } = require('express-validator');
-// const axios = require('axios');
-// const dotenv = require('dotenv');
-// dotenv.config();
+const ServiceModel = require('../models/serviceModel');
+const HttpException = require('../utils/HttpException.utils');
+const { validationResult } = require('express-validator');
+const axios = require('axios');
+const request = require('request');
+const dotenv = require('dotenv');
+const util = require("util");
+const fs = require('fs').promises;
+const yaml = require('js-yaml');
+const { Client } = require('ssh2');
+dotenv.config();
 
-// /******************************************************************************
-//  *                              Cluster Controller
-//  ******************************************************************************/
-// class ServiceController {
-//     getAllData = async (req, res, next) => {
-//         let dataList;
-//         if(req.query.clusterType !== undefined) dataList = await ClusterModel.findOne(req.query)
-//         else dataList = await ClusterModel.find();
+/******************************************************************************
+ *                              Service Controller
+ ******************************************************************************/
+class ServiceController {
+    serviceCheck = async (req, res, next) => {
 
-//         if (!dataList.length) {
-//           throw new HttpException(404, "Data not found");
-//         }
-    
-//         var clusterName = [];
-//         var clusterType = [];
-//         var clusterCode = [];
-//         var status = [];
+        const filePath = 'src/configs/check.yaml';
 
-//         for (var i = 0; i < dataList.length; i++) {
-//           clusterName[i] = dataList[i]["clusterName"];
-//           clusterType[i] = dataList[i]["clusterType"];
-//           clusterCode[i] = dataList[i]["clusterCode"];
-//           status[i] = (dataList[i]["status"] ? "running" : "Notrunning");
-//         }
-    
-//         res.status(200).json(dataList);
-//     };
+        try {
+            const data = await fs.readFile(filePath, 'utf8');
+            const parsedData = yaml.load(data);
+            const dataArray = Array.isArray(parsedData) ? parsedData : [parsedData];
 
-//     checkValidation = (req) => {
-//       const errors = validationResult(req)
-//       if (!errors.isEmpty()) {
-//         throw new HttpException(400, 'Validation faild', errors);
-//       }
-//     };
-// }
-// /******************************************************************************
-//  *                               Export
-//  ******************************************************************************/
-// module.exports = new ServiceController;
+            const service = dataArray[0].service;
+
+            const sshConfig = {
+                host: '192.168.160.131',
+                port: 22,
+                username: 'ubuntu',
+                password: 'qwe1212!Q',
+            };
+
+            const serviceList = service.map(item => ({
+                name: item.name,
+                command: `systemctl status ${item.name}`
+            }));
+
+            const result = [];
+
+            console.log("serviceList", serviceList);
+
+            const conn = new Client();
+
+            conn.on('ready', () => {
+                executeCommands(serviceList);
+            });
+
+            function executeCommands(commandObjList) {
+                if (!commandObjList || commandObjList.length === 0) {
+                    console.log('실행할 명령어가 없습니다.');
+                    conn.end(); // Close the connection
+                    res.send(result);
+                    // res.send(JSON.stringify(result));
+                    return;
+                }
+
+                const commandObj = commandObjList.shift();
+                const command = commandObj.command;
+
+                conn.exec(command, (err, stream) => {
+                    if (err) throw err;
+                    let output = '';
+                    stream
+                        .on('data', data => (output += data.toString()))
+                        .on('close', (code, signal) => {
+                            console.log('Command:', command);
+                            console.log('Exit Code:', code);
+                            console.log('Signal:', signal);
+                            console.log('Output:', output.trim());
+
+                            let status = 'error';
+                            if (code === 0) {
+                                status = 'ok';
+                            }
+
+                            result.push({
+                                name: commandObj.name,
+                                status: status,
+                                // signal: signal,
+                                // output: output.trim(),
+                            });
+                            executeCommands(commandObjList); // Recursively execute the next command
+                        });
+                });
+            }
+
+            conn.connect(sshConfig);
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
+    };
+}
+/******************************************************************************
+ *                               Export
+ ******************************************************************************/
+module.exports = new ServiceController;
