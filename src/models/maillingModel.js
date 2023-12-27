@@ -18,7 +18,7 @@ class maillingModel {
         // send mail with defined transport object
         let info = await transporter.sendMail({
           from: process.env.NODEMAILER_USER,
-          to: "cky@innogrid.com",
+          to: "dj622@innogrid.com",
           subject: 'MSG',
           text: "Testing Message...",
           html: `<b>Testing Message...</b>`,

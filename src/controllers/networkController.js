@@ -8,6 +8,7 @@ const util = require("util");
 const fs = require('fs').promises;
 const yaml = require('js-yaml');
 const { Client } = require('ssh2');
+const sshConfig = require('../configs/sshConfig');
 dotenv.config();
 
 /******************************************************************************
@@ -25,15 +26,8 @@ class NetworkController {
 
             const network = dataArray[0].network;
 
-            const sshConfig = {
-                host: '192.168.160.131',
-                port: 22,
-                username: 'ubuntu',
-                password: 'qwe1212!Q',
-            };
-
             const networkList = network.map(item => {
-                const command = item.kind === 'host' ? `ping -w 1 ${item.ip}` : `netstat -an | grep LISTEN | grep ${item.ip}:${item.port}`;
+                const command = item.kind === 'host' ? `ping -w 1 ${item.ip}` : `nc -zvw1 ${item.ip} ${item.port}`;
                 return {
                     name: item.name,
                     kind: item.kind,
@@ -71,33 +65,44 @@ class NetworkController {
                     }
 
                     let output = '';
+                    let errorOutput = '';
 
                     stream.on('data', data => {
                         output += data.toString();
-                        // Check if "icmp_seq=2" is present in the output
-                      if (output.includes("icmp_seq=1")) {
-                            // Set status to 'ok' and close the stream to end the execution
-                            result.push({
-                                name: commandObj.name,
-                                status: 'ok',
-                                output: output.trim(),
-                            });
-                        }else if(output.includes("bytes of data")) {
-                          // Set status to 'error' and close the stream to end the execution
-                          result.push({
-                              name: commandObj.name,
-                              status: 'error',
-                              output: output.trim(),
-                          });
-                      }
+                    });
+
+                    stream.stderr.on('data', data => {
+                        errorOutput += data.toString();
                     });
 
                     stream.on('close', (code, signal) => {
-                        console.log('Command:', command);
-                        console.log('Signal:', signal);
-                        console.log('Output:', output.trim());
 
-                        // Execute the next command
+                        if (commandObj.kind === "host") {
+                            if (output.includes(", 0% packet loss,")) {
+                                result.push({
+                                    name: commandObj.name,
+                                    status: 'ok',
+                                });
+                            } else if (output.includes("100% packet loss")) {
+                                result.push({
+                                    name: commandObj.name,
+                                    status: 'error',
+                                });
+                            }
+                        } else if (commandObj.kind === "port") {
+                            if (errorOutput.includes("succeeded!")) {
+                                result.push({
+                                    name: commandObj.name,
+                                    status: 'ok',
+                                });
+                            } else if (errorOutput.includes("failed:") || errorOutput.includes("timed out:")) {
+                                result.push({
+                                    name: commandObj.name,
+                                    status: 'error',
+                                });
+                            }
+                        }
+
                         executeCommands(commandObjList);
                     });
                 });
@@ -111,6 +116,7 @@ class NetworkController {
         }
     };
 }
+
 /******************************************************************************
  *                               Export
  ******************************************************************************/
