@@ -8,6 +8,7 @@ const util = require("util");
 const fs = require('fs').promises;
 const yaml = require('js-yaml');
 const { Client } = require('ssh2');
+const sshConfig = require('../configs/sshConfig');
 dotenv.config();
 
 /******************************************************************************
@@ -25,21 +26,12 @@ class ServiceController {
 
             const service = dataArray[0].service;
 
-            const sshConfig = {
-                host: '192.168.160.131',
-                port: 22,
-                username: 'ubuntu',
-                password: 'qwe1212!Q',
-            };
-
             const serviceList = service.map(item => ({
                 name: item.name,
                 command: `systemctl status ${item.name}`
             }));
 
             const result = [];
-
-            console.log("serviceList", serviceList);
 
             const conn = new Client();
 
@@ -52,7 +44,6 @@ class ServiceController {
                     console.log('실행할 명령어가 없습니다.');
                     conn.end(); // Close the connection
                     res.send(result);
-                    // res.send(JSON.stringify(result));
                     return;
                 }
 
@@ -65,10 +56,6 @@ class ServiceController {
                     stream
                         .on('data', data => (output += data.toString()))
                         .on('close', (code, signal) => {
-                            console.log('Command:', command);
-                            console.log('Exit Code:', code);
-                            console.log('Signal:', signal);
-                            console.log('Output:', output.trim());
 
                             let status = 'error';
                             if (code === 0) {
@@ -78,8 +65,6 @@ class ServiceController {
                             result.push({
                                 name: commandObj.name,
                                 status: status,
-                                // signal: signal,
-                                // output: output.trim(),
                             });
                             executeCommands(commandObjList); // Recursively execute the next command
                         });
