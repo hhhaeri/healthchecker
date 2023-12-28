@@ -44,11 +44,23 @@ app.listen(port, () =>
 
 // mailling
 mailling.readFileAndInitialize();
-
-auto.scheduleJob("0/10 * * * * *", async function(){
+auto.scheduleJob("0/20 * * * * *", async function(){
     if(mailling.webdataList){
         await mailling.webCheckAndMailling();
     }
+    if(mailling.servicedataList){
+        await mailling.serviceCheckAndMailling();
+    }
+    if(mailling.networkdataList){
+        await mailling.networkCheckAndMailling();
+    }
+    console.log("//////////////////////////////////////////////////////////////////////")
+    console.log("Web List: ");
+    console.log(mailling.webdataList);
+    console.log("Service List: ");
+    console.log(mailling.servicedataList);
+    console.log("Network List: ");
+    console.log(mailling.networkdataList);
 })
 
 auto.scheduleJob("0 0 0 * *", async function(){

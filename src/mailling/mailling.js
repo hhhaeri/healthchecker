@@ -50,10 +50,16 @@ class mailling {
 
     webCheckAndMailling = async () => {
         let webCheckData = await webModel.mailCheck(this.dataArray[0].web);
+
         await webCheckData.map((data) => {
             if(data.status === "error"){
                 this.webdataList.map((data2) => {
                     if(data2.name === data.name) return data2.errorCount+=1;
+                })
+            }
+            if(data.status === "ok"){
+                this.webdataList.map((data2) => {
+                    if(data2.name === data.name) return data2.errorCount=0;
                 })
             }
         })
@@ -67,50 +73,53 @@ class mailling {
     }
 
     // service, network 메일링 개발 진행중
-    // serviceCheckAndMailling = async () => {
-    //     console.log(this.dataArray[0].service)
-    //     const serviceList = await this.dataArray[0].service.map(item => ({
-    //         name: item.name,
-    //         command: `systemctl status ${item.name}`
-    //     }));
+    serviceCheckAndMailling = async () => {
+        let serviceCheckData = await serviceModel.mailcheck();
 
-    //     let serviceCheckData = await serviceController.mailcheck(serviceList);
-    //     await setTimeout(async () => {
-    //         await serviceCheckData.map((data) => {
-    //             if(data.status === "error"){
-    //                 this.servicedataList.map((data2) => {
-    //                     if(data2.name === data.name) return data2.errorCount+=1;
-    //                 })
-    //             }
-    //         })
-            
-    //         await this.servicedataList.map((data) => {
-    //             if(data.errorCount === 3 & data.sendmailStatus === false){
-    //                 maillingModel.mailling("service error 발생",data.name+" service  error 발생\n"+"신속한 조치 필요!! 담당 엔지니어 : 최기엽 연구원")
-    //                 return data.sendmailStatus=true;
-    //             }
-    //         })
-    //         console.log(this.servicedataList)
-    //     }, 5000)
-    // }
-
-    // networkCheckAndMailling = async () => {
-    //     let networkCheckData = await networkController.mailCheck(this.dataArray[0].network);
-    //     await networkCheckData.map((data) => {
-    //         if(data.status === "error"){
-    //             this.networkdataList.map((data2) => {
-    //                 if(data2.name === data.name) return data2.errorCount+=1;
-    //             })
-    //         }
-    //     })
+        await serviceCheckData.map((data) => {
+            if(data.status === "error"){
+                this.servicedataList.map((data2) => {
+                    if(data2.name === data.name) return data2.errorCount+=1;
+                })
+            }
+            if(data.status === "ok"){
+                this.servicedataList.map((data2) => {
+                    if(data2.name === data.name) return data2.errorCount=0;
+                })
+            }
+        })
         
-    //     await this.networkdataList.map((data) => {
-    //         if(data.errorCount === 3 & data.sendmailStatus === false){
-    //             maillingModel.mailling("network error 발생",data.name+" network error 발생\n"+"신속한 조치 필요!! 담당 엔지니어 : 최기엽 연구원")
-    //             return data.sendmailStatus=true;
-    //         }
-    //     })
-    // }
+        await this.servicedataList.map((data) => {
+            if(data.errorCount === 3 & data.sendmailStatus === false){
+                maillingModel.mailling("service error 발생",data.name+" service  error 발생\n"+"신속한 조치 필요!! 담당 엔지니어 : 최기엽 연구원")
+                return data.sendmailStatus=true;
+            }
+        })
+    }
+
+    networkCheckAndMailling = async () => {
+        let networkCheckData = await networkModel.mailcheck();
+
+        await networkCheckData.map((data) => {
+            if(data.status === "error"){
+                this.networkdataList.map((data2) => {
+                    if(data2.name === data.name) return data2.errorCount+=1;
+                })
+            }
+            if(data.status === "ok"){
+                this.servicedataList.map((data2) => {
+                    if(data2.name === data.name) return data2.errorCount=0;
+                })
+            }
+        })
+        
+        await this.networkdataList.map((data) => {
+            if(data.errorCount === 3 & data.sendmailStatus === false){
+                maillingModel.mailling("network error 발생",data.name+" network error 발생\n"+"신속한 조치 필요!! 담당 엔지니어 : 최기엽 연구원")
+                return data.sendmailStatus=true;
+            }
+        })
+    }
 
     resetStatus = async () => {
         //web, service, network 메일링 조건(errorCount, sendmailStatus) 초기화 

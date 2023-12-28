@@ -41,7 +41,6 @@ class ServiceController {
 
             function executeCommands(commandObjList) {
                 if (!commandObjList || commandObjList.length === 0) {
-                    console.log('실행할 명령어가 없습니다.');
                     conn.end(); // Close the connection
                     res.send(result);
                     return;

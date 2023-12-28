@@ -1,43 +1,16 @@
-// const query = require('../db/db-connection');
-// const { multipleColumnSet } = require('../utils/common.utils');
-// class NetworkModel {
-//     tableName = 'fems_edges';
+const axios = require('axios');
 
-//     find = async (params = {}) => {
-//         let sql = `SELECT * FROM ${this.tableName}`;
+class NetworkModel {
+    mailcheck = async () => {
+        try {
+            const response = await axios.get('http://localhost:3000/api/v1/network/');
+            const data = response.data;
 
-//         if (!Object.keys(params).length) {
-//             sql += ` WHERE status = 1`
-//             return await query(sql);
-//         }
+            return data;
+        } catch (error) {
+            console.error('Error fetching data from API:', error.message);
+        }
+    }
+}
 
-//         const { columnSet, values } = multipleColumnSet(params)
-//         sql += ` WHERE ${columnSet} and status = 1`;
-
-//         return await query(sql, [...values]);
-//     }
-
-//     findOne = async (params) => {
-//         const { columnSet, values } = multipleColumnSet(params);
-
-//         const sql = `SELECT * FROM ${this.tableName}
-//         WHERE ${columnSet} and status = 1`;
-
-//         const result = await query(sql, [...values]);
-
-//         // return back the first row (data)
-//         return result;
-//     }
-    
-//     deployOne = async (params) => {
-//         const sql = `SELECT * FROM ${this.tableName}
-//         WHERE clusterCode = "${params}"`;
-
-//         const result = await query(sql);
-
-//         // return back the first row (data)
-//         return result;
-//     }
-// }
-
-// module.exports = new NetworkModel;
+module.exports = new NetworkModel;

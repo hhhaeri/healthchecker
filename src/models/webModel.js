@@ -3,14 +3,6 @@ const exec = require('child_process').exec;
 const https = require("https");
 
 class WebModel {
-    find = async () => {
-        await exec('curl registry.fesm.cf', (err,out,stderr) => {
-            console.log(out);
-            
-            return out;
-        })
-    }
-
     check = async (webList) => {
         // webList = [{url, status, errorCount, },...]
         // hardCoding List is harborUrl and ElasticSearchURL on FEMS Server

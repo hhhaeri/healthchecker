@@ -38,8 +38,6 @@ class NetworkController {
 
             const result = [];
 
-            console.log("networkList", networkList);
-
             const conn = new Client();
 
             conn.on('ready', () => {
@@ -48,7 +46,6 @@ class NetworkController {
 
             function executeCommands(commandObjList) {
                 if (!commandObjList || commandObjList.length === 0) {
-                    console.log('실행할 명령어가 없습니다.');
                     conn.end(); // Close the connection
                     res.send(result);
                     return;
