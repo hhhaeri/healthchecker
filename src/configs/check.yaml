@@ -32,7 +32,7 @@ network:
   - kind: port
     name: port01
     protocol: ssh
-    ip: 192.168.0.1
+    ip: 101.79.1.154
     port: 22
   - kind: port
     name: port02
