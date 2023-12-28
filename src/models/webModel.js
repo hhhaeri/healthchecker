@@ -1,5 +1,3 @@
-const { multipleColumnSet } = require('../utils/common.utils');
-const exec = require('child_process').exec;
 const https = require("https");
 
 class WebModel {

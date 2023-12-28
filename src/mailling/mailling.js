@@ -4,11 +4,6 @@ const maillingModel = require('../models/maillingModel')
 const webModel = require('../models/webModel');
 const serviceModel = require('../models/serviceModel');
 const networkModel = require('../models/networkModel');
-
-//Controller 임시 대응
-const serviceController = require('../controllers/serviceController');
-const networkController = require('../controllers/networkController');
-
 const dotenv = require('dotenv');
 
 dotenv.config();
