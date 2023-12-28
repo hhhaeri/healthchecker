@@ -51,8 +51,8 @@ auto.scheduleJob("0/10 * * * * *", async function(){
     }
 })
 
-auto.scheduleJob("0 0 * * *", async function(){
+auto.scheduleJob("0 0 0 * *", async function(){
     await mailling.resetStatus();
-})
+});
 
 module.exports = app;

@@ -11,7 +11,7 @@ const { Client } = require('ssh2');
 dotenv.config();
 
 /******************************************************************************
- *                              Service Controller
+ *                              Network Controller
  ******************************************************************************/
 class NetworkController {
     networkCheck = async (req, res, next) => {
