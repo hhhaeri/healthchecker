@@ -39,3 +39,8 @@ network:
     protocol: rdp
     ip: 192.168.0.5
     port: 3389
+  - kind: port
+    name: ssh 22 확인
+    protocol: rdp
+    ip: 192.168.0.5
+    port: 3389

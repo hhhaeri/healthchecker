@@ -26,8 +26,10 @@ class NetworkController {
                 return {
                     name: item.name,
                     kind: item.kind,
+                    ip: item.ip,
                     command: command,
                     ...(item.kind === 'port' && { protocol: item.protocol }),
+                    ...(item.kind === 'port' && { port: item.port }),
                 };
             });
 
@@ -74,11 +76,13 @@ class NetworkController {
                                 result.push({
                                     name: commandObj.name,
                                     status: 'ok',
+                                    ip: commandObj.ip,
                                 });
                             } else if (output.includes("100% packet loss")) {
                                 result.push({
                                     name: commandObj.name,
                                     status: 'error',
+                                    ip: commandObj.ip,
                                 });
                             }
                         } else if (commandObj.kind === "port") {
@@ -86,11 +90,15 @@ class NetworkController {
                                 result.push({
                                     name: commandObj.name,
                                     status: 'ok',
+                                    ip: commandObj.ip,
+                                    port: commandObj.port,
                                 });
                             } else if (errorOutput.includes("failed:") || errorOutput.includes("timed out:")) {
                                 result.push({
                                     name: commandObj.name,
                                     status: 'error',
+                                    ip: commandObj.ip,
+                                    port: commandObj.port,
                                 });
                             }
                         }
