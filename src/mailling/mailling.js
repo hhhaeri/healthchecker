@@ -61,7 +61,7 @@ class mailling {
         
         await this.webdataList.map((data) => {
             if(data.errorCount === 3 & data.sendmailStatus === false){
-                maillingModel.mailling("web error 발생",data.name+" web error 발생\n"+"신속한 조치 필요!! 담당 엔지니어 : 최기엽 연구원")
+                maillingModel.mailling("[이노그리드] web error 발생","장애 발생 : "+data.name+"<br>신속한 조치 필요!!<br><br> 담당 엔지니어 : 최기엽 연구원")
                 return data.sendmailStatus=true;
             }
         })
@@ -86,7 +86,7 @@ class mailling {
         
         await this.servicedataList.map((data) => {
             if(data.errorCount === 3 & data.sendmailStatus === false){
-                maillingModel.mailling("service error 발생",data.name+" service  error 발생\n"+"신속한 조치 필요!! 담당 엔지니어 : 최기엽 연구원")
+                maillingModel.mailling("[이노그리드] service error 발생","장애 발생 : "+data.name+"<br>신속한 조치 필요!!<br><br> 담당 엔지니어 : 최기엽 연구원")
                 return data.sendmailStatus=true;
             }
         })
@@ -110,7 +110,7 @@ class mailling {
         
         await this.networkdataList.map((data) => {
             if(data.errorCount === 3 & data.sendmailStatus === false){
-                maillingModel.mailling("network error 발생",data.name+" network error 발생\n"+"신속한 조치 필요!! 담당 엔지니어 : 최기엽 연구원")
+                maillingModel.mailling("[이노그리드] network error 발생","장애 발생 : "+data.name+"<br>신속한 조치 필요!!<br><br> 담당 엔지니어 : 최기엽 연구원")
                 return data.sendmailStatus=true;
             }
         })
@@ -118,6 +118,7 @@ class mailling {
 
     resetStatus = async () => {
         //web, service, network 메일링 조건(errorCount, sendmailStatus) 초기화 
+        console.log("dataList 초기화 진행...")
         await this.webdataList.map((data) => {
             data.errorCount = 0;
             data.sendmailStatus = false;
