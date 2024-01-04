@@ -1,8 +1,3 @@
-# Target Server
-server:
-  - ip : 192.168.160.131
-  - port: 22
-
 # Service(systemctl service name)
 service:
   - name:  docker
@@ -15,32 +10,14 @@ web:
     url: https://registry.fems.cf
   - name: naver
     url: https://naver.com/
-  - name: naver123213213
-    url: https://naver123213213123.com/
 
 # Network(HOST) /etc/hosts
 network:
-  - kind: host
-    name: network01
-    ip: 192.168.0.1
-  - kind: host
-    name: network02
-    ip: 192.168.0.2
   - kind: host
     name: network03
     ip: 8.8.8.8
   - kind: port
     name: port01
     protocol: ssh
-    ip: 192.168.0.1
+    ip: 101.79.1.154
     port: 22
-  - kind: port
-    name: port02
-    protocol: rdp
-    ip: 192.168.0.5
-    port: 3389
-  - kind: port
-    name: ssh 22 확인
-    protocol: rdp
-    ip: 192.168.0.5
-    port: 3389
